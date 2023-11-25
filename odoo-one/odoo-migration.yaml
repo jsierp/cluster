@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: odoo-migration-job
+spec:
+  ttlSecondsAfterFinished: 10
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: odoo
+          image: odoo:17.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              odoo --data-dir /var/lib/odoo/ --db_host postgres --db_user user --db_password password -d odoo -i account --stop-after-init
+          env:
+          - name: HOST
+            value: postgres
+          - name: USER
+            value: user
+          - name: PASSWORD
+            value: password
+          volumeMounts:
+            - mountPath: /var/lib/odoo
+              name: odoo-data
+      volumes:
+        - name: odoo-data
+          persistentVolumeClaim:
+            claimName: odoo-data-claim
