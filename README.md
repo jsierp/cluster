@@ -37,6 +37,9 @@ When migration is finished, run:
 kubectl rollout restart -f odoo-one/odoo-deployment.yaml```
 ```
 
+## TODO:
+- rabbigmq's hostname changes on every restart thus the data is not preserved
+
 ## What I have learned:
 - The docker container of Odoo is run as odoo user, which by default doesn't have access to the volume. Need to change permisions. The easiest way it through initContainers with chown command. This problem is probably specific to the storage type as I use a regular disk.
 - For migrations you can use `ghcr.io/groundnuty/k8s-wait-for:v1.6` as initContainer - it will wait until the job is finished.
